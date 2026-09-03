@@ -42,8 +42,6 @@ export default function Footer() {
             Оптовым клиентам
           </NavLink>
         </div>
-
-        {/* Соцсети */}
         <div>
           <p className="text-[#446B80] mb-4">
             Мы в социальных сетях

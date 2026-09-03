@@ -7,7 +7,7 @@ import { addToCart } from '../CartLogic'
 function AnimateCard({ children }) {
   const ref = useRef(null)
   const [show, setShow] = useState(false)
-
+/////////////////////////////////////////////////////////////////////////////// аниматсия 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {

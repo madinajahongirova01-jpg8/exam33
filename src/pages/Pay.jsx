@@ -1,274 +1,243 @@
-import { useEffect, useState, useRef } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
-import LockIcon from "@mui/icons-material/Lock";
-import Toaster from "../components/Toaster1";
+import { Toaster, toast } from "react-hot-toast";
+import { LockIcon } from "lucide-react";
 
-export default function Pay() {
-  const [cart, setCart] = useState([]);
-  const [orderNumber, setOrderNumber] = useState("");
-  const [timeLeft, setTimeLeft] = useState(20 * 60);
-  const [cvv, setCvv] = useState("");
-  const [saveCard, setSaveCard] = useState(false);
-  const [open, setOpen] = useState(false);
-
-  const timerRef = useRef(null);
+function Pay() {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("cart")) || [];
-    setCart(stored);
+  const [cardNumber, setCardNumber] = useState("");
+  const [expiry, setExpiry] = useState("");
+  const [cvv, setCvv] = useState("");
+  const [saveCard, setSaveCard] = useState(false);
 
-    // Корзина уже пуста (например, заказ был оплачен и страницу обновили,
-    // либо сюда зашли напрямую) — не создаём новый заказ и не запускаем таймер.
-    if (stored.length === 0) {
-      setTimeLeft(0);
-      return;
+  const formatCardNumber = (value) => {
+    const numbers = value.replace(/\D/g, "").slice(0, 16);
+
+    if (!numbers) {
+      return "xxxx xxxx xxxx xxxx";
     }
 
-    let orderId = localStorage.getItem("orderNumber");
-    if (!orderId) {
-      orderId = generateOrderNumber();
-      localStorage.setItem("orderNumber", orderId);
-    }
-    setOrderNumber(orderId);
-
-    let deadline = Number(localStorage.getItem("paymentDeadline"));
-
-    if (!deadline || deadline <= Date.now()) {
-      deadline = Date.now() + 20 * 60 * 1000;
-      localStorage.setItem("paymentDeadline", deadline);
-    }
-    timerRef.current = setInterval(() => {
-      const secondsLeft = Math.max(
-        0,
-        Math.floor((deadline - Date.now()) / 1000)
-      );
-
-      setTimeLeft(secondsLeft);
-
-      if (secondsLeft === 0) {
-        clearInterval(timerRef.current);
-      }
-    }, 1000);
-
-    return () => clearInterval(timerRef.current);
-  }, []);
-
-  const generateOrderNumber = () => {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let result = "";
 
-    for (let i = 0; i < 10; i++) {
-      result += chars[Math.floor(Math.random() * chars.length)];
+    for (let i = 0; i < numbers.length; i++) {
+      if (i < numbers.length - 4) {
+        result += "x";
+      } else {
+        result += numbers[i];
+      }
+
+      if ((i + 1) % 4 === 0 && i !== numbers.length - 1) {
+        result += " ";
+      }
     }
 
     return result;
   };
 
-  const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-
-    return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  const handleCardNumber = (e) => {
+    const value = e.target.value.replace(/\D/g, "").slice(0, 16);
+    setCardNumber(value);
   };
 
-  const total = cart.reduce(
-    (sum, item) => sum + item.price * item.cnt,
-    0
-  );
+  const handleExpiry = (e) => {
+    let value = e.target.value.replace(/\D/g, "").slice(0, 4);
 
-  const deliveryPrice = 0;
-  const totalToPay = total + deliveryPrice;
+    if (value.length >= 3) {
+      value = value.slice(0, 2) + "/" + value.slice(2);
+    }
 
-  const isCartEmpty = cart.length === 0;
-  const isExpired = timeLeft === 0;
+    setExpiry(value);
+  };
+
+  const handleCvv = (e) => {
+    setCvv(e.target.value.replace(/\D/g, "").slice(0, 3));
+  };
 
   const handlePay = () => {
-    if (isExpired) return;
+  
 
-    clearInterval(timerRef.current);
-
-    setTimeLeft(0);
-
-    localStorage.removeItem("paymentDeadline");
-    localStorage.removeItem("orderNumber");
-    localStorage.removeItem("cart");
-    setCart([]);
-
-    setOpen(true);
-
-    console.log("Оплата успешно выполнена");
+    navigate("/paymentSuccess");
   };
 
   return (
-    <div className="max-w-[1100px] mx-auto px-[16px] sm:px-[24px] md:px-[40px] py-[20px] md:py-[30px]">
+    <div className="min-h-screen bg-white px-4 py-8">
+      <Toaster position="top-right" />
 
-      <div className="flex flex-wrap items-center gap-[8px] text-[#7FC9F0] text-[12px] sm:text-[13px] mb-[20px] md:mb-[30px]">
-        <span>Корзина</span>
-        <span className="text-[#B7C6D0]">›</span>
-        <span>Оформление заказа</span>
-        <span className="text-[#B7C6D0]">›</span>
-        <span className="text-[#446B80]">Оплата</span>
-      </div>
+      <div className="mx-auto max-w-[900px]">
 
-      <p className="text-[#446B80] text-[14px] mb-[20px] md:mb-[30px]">
-        Заказ №{orderNumber}
-      </p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-[28px] font-semibold text-[#263f52]">
+              Оплата заказа
+            </h1>
 
-      <div className="flex flex-col gap-[8px] mb-[24px] md:mb-[30px]">
-        <p className="text-[#446B80] text-[20px] sm:text-[24px] font-semibold">
-          Итого к оплате
-        </p>
-
-        <p className="text-[#446B80] text-[19px] sm:text-[22px]">
-          {totalToPay.toLocaleString()} ₽
-        </p>
-      </div>
-
-      <div className="flex flex-col lg:flex-row gap-[32px] lg:gap-[60px] items-start">
-
-        <div className="w-full lg:w-auto flex flex-col gap-[20px]">
-
-          <label className="flex items-center gap-[12px] cursor-pointer">
-            <input
-              type="radio"
-              name="paymentType"
-              checked
-              readOnly
-              className="w-[20px] h-[20px] accent-[#7FC9F0] shrink-0"
-            />
-
-            <span className="text-[#446B80] text-[15px]">
-              Новая карта
-            </span>
-          </label>
-
-          <div className="relative w-full sm:w-[420px] h-[130px] rounded-[10px] overflow-hidden bg-[#F0F0F0] flex">
-
-            <div className="flex-1 flex flex-col justify-between p-[16px] min-w-0">
-
-              <div className="flex justify-between items-start">
-
-                <p className="text-[#446B80] text-[13px]">
-                  Номер карты
-                </p>
-
-                <div className="bg-[#EB001B] w-[24px] h-[16px] rounded-full opacity-80 relative -mr-[8px] shrink-0">
-
-                  <div className="bg-[#F79E1B] w-[24px] h-[16px] rounded-full absolute left-[10px] opacity-80" />
-
-                </div>
-
-              </div>
-
-              <p className="text-[#446B80] text-[16px] tracking-wide">
-                xxxx xxxx xxxx 7580
-              </p>
-
-              <div className="flex items-center gap-[10px]">
-
-                <div className="flex flex-col">
-
-                  <span className="text-[#B7C6D0] text-[9px] leading-tight">
-                    СРОК
-                  </span>
-
-                  <span className="text-[#B7C6D0] text-[9px] leading-tight">
-                    ДЕЙСТВИЯ
-                  </span>
-
-                </div>
-
-                <div className="border border-[#DCE7EF] rounded-[4px] px-[8px] py-[2px] text-[#446B80] text-[13px]">
-                  ×× / ××
-                </div>
-
-              </div>
-
-            </div>
-
-            <div className="w-[90px] sm:w-[110px] shrink-0 bg-[#2B2B2B] flex flex-col justify-center items-center gap-[6px] p-[10px]">
-
-              <span className="text-[#B7C6D0] text-[9px] self-start">
-                CVC/CVV
-              </span>
-
-              <input
-                type="text"
-                maxLength={3}
-                value={cvv}
-                onChange={(e) =>
-                  setCvv(e.target.value.replace(/\D/g, ""))
-                }
-                className="w-full bg-white border-2 border-[#F2C94C] rounded-[4px] px-[8px] py-[4px] text-[14px] outline-none"
-              />
-
-            </div>
-
-          </div>
-
-          <label className="flex items-center gap-[10px] cursor-pointer">
-            <input
-              type="checkbox"
-              checked={saveCard}
-              onChange={(e) => setSaveCard(e.target.checked)}
-              className="w-[16px] h-[16px] accent-[#7FC9F0] shrink-0"
-            />
-
-            <span className="text-[#446B80] text-[14px]">
-              Сохранить карту для будущих покупок
-            </span>
-
-          </label>
-          <button
-            onClick={handlePay}
-            disabled={isExpired}
-            className={`w-full sm:w-[420px] text-white text-[15px] font-medium rounded-[10px] py-[14px] mt-[10px] transition-colors ${
-              isExpired
-                ? "bg-[#DCE7EF] cursor-not-allowed"
-                : "bg-[#7FC9F0] hover:bg-[#6AB8E0]"
-            }`}
-          >
-            {isExpired ? "Время оплаты истекло" : "Оплатить"}
-          </button>
-
-          <Toaster
-            open={open}
-            handleClose={() => setOpen(false)}
-          />
-        </div>
-
-        <div className="flex flex-col gap-[16px] w-full lg:max-w-[280px] mt-0 lg:mt-[8px]">
-
-          <p
-            className={`text-[15px] font-medium ${
-              isExpired ? "text-red-400" : "text-[#446B80]"
-            }`}
-          >
-            {isExpired ? "00:00" : formatTime(timeLeft)} на оплату заказа
-          </p>
-
-          <div className="flex items-start gap-[10px]">
-            <LockIcon
-              sx={{
-                color: "#B7C6D0",
-                fontSize: 18,
-                marginTop: "2px",
-              }}
-            />
-
-            <p className="text-[#B7C6D0] text-[13px] leading-snug">
-              Интернет-платежи защищены сертификатом TLS и протоколом
-              3D Secure.
+            <p className="mt-2 text-[15px] text-[#718899]">
+              Введите данные банковской карты
             </p>
           </div>
 
-          <p className="text-[#B7C6D0] text-[13px] leading-snug">
-            Яндекс не передаёт сторонним лицам платёжные данные,
-            в том числе данные карты.
-          </p>
+          <div className="flex items-center gap-2 text-[#53738a]">
+            <LockIcon size={18} />
+
+            <span className="text-[14px]">
+              Безопасная оплата
+            </span>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-8 md:flex-row">
+
+          <div className="w-full md:w-[500px]">
+
+            <div className="relative h-[150px] w-full overflow-hidden rounded-[12px] bg-[#f0f1f2]">
+
+              <div className="absolute left-5 top-5">
+                <p className="text-[14px] text-[#53738a]">
+                  Номер карты
+                </p>
+
+                <div className="relative mt-1 h-[32px] w-[310px]">
+
+                  <div
+                    className={`absolute left-0 top-0 text-[19px] tracking-[2px] ${
+                      cardNumber
+                        ? "text-[#53738a]"
+                        : "text-[#9baab4]"
+                    }`}
+                  >
+                    {formatCardNumber(cardNumber)}
+                  </div>
+
+                  <input
+                    type="text"
+                    value={cardNumber}
+                    onChange={handleCardNumber}
+                    inputMode="numeric"
+                    maxLength={16}
+                    className="absolute inset-0 w-full bg-transparent text-transparent caret-[#53738a] outline-none"
+                  />
+
+                </div>
+              </div>
+
+              <div className="absolute right-[148px] top-[18px] flex items-center">
+                <div className="h-[28px] w-[28px] rounded-full bg-[#e51b35]" />
+
+                <div className="-ml-[9px] h-[28px] w-[28px] rounded-full bg-[#f5a900]" />
+              </div>
+
+              <div className="absolute bottom-4 left-5">
+                <p className="text-[11px] uppercase text-[#a5b3bc]">
+                  Срок
+                </p>
+
+                <p className="text-[11px] uppercase text-[#a5b3bc]">
+                  действия
+                </p>
+              </div>
+
+              <div className="absolute bottom-5 left-[88px]">
+                <input
+                  type="text"
+                  value={expiry}
+                  onChange={handleExpiry}
+                  placeholder="xx / xx"
+                  inputMode="numeric"
+                  maxLength={5}
+                  className="w-[68px] rounded-[4px] border border-[#d7e1e6] bg-transparent px-2 py-1 text-center text-[13px] text-[#53738a] outline-none placeholder:text-[#53738a]"
+                />
+              </div>
+
+              <div className="absolute right-0 top-0 h-full w-[123px] bg-[#2d2d2d]">
+
+                <div className="absolute left-0 top-[47px] w-full text-center">
+
+                  <p className="text-[11px] text-[#b9bec2]">
+                    CVC/CVV
+                  </p>
+
+                  <input
+                    type="text"
+                    value={cvv}
+                    onChange={handleCvv}
+                    inputMode="numeric"
+                    maxLength={3}
+                    className="mt-2 h-[36px] w-[100px] rounded-[5px] border-2 border-[#f0b900] bg-white px-2 text-center text-[#333] outline-none"
+                  />
+
+                </div>
+
+              </div>
+
+            </div>
+
+            <label className="mt-6 flex cursor-pointer items-center gap-3">
+
+              <input
+                type="checkbox"
+                checked={saveCard}
+                onChange={(e) => setSaveCard(e.target.checked)}
+                className="h-[18px] w-[18px]"
+              />
+
+              <span className="text-[16px] text-[#53738a]">
+                Сохранить карту для будущих покупок
+              </span>
+
+            </label>
+
+          </div>
+
+          <div className="w-full md:w-[300px]">
+
+            <div className="rounded-[12px] bg-[#f7f8f9] p-6">
+
+              <div className="mb-5 flex items-center justify-between">
+
+                <span className="text-[15px] text-[#718899]">
+                  Заказ
+                </span>
+
+                <span className="font-medium text-[#263f52]">
+                  № 12548
+                </span>
+
+              </div>
+
+              <div className="mb-5 border-t border-[#e1e5e8]" />
+
+              <div className="flex items-center justify-between">
+
+                <span className="text-[15px] text-[#718899]">
+                  К оплате
+                </span>
+
+                <span className="text-[22px] font-semibold text-[#263f52]">
+                  0 ₽
+                </span>
+
+              </div>
+
+              <p className="mt-4 text-center text-[14px] text-[#53738a]">
+                13:57 на оплату заказа
+              </p>
+
+              <button
+                onClick={handlePay}
+                className="mt-6 w-full rounded-[8px] bg-[#54b8e8] py-3 text-[16px] font-medium text-white transition hover:bg-[#3da9dc]"
+              >
+                Оплатить
+              </button>
+
+            </div>
+
+          </div>
+
         </div>
       </div>
     </div>
   );
 }
+
+export default Pay;

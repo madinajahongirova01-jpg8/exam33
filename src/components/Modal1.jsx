@@ -33,8 +33,8 @@ const ACCOUNT_MENU_COLORS = {
 };
 
 const USER = {
-  name: "Анна",
-  email: "annaaannnnanana@gmail.com",
+  name: "Madina🥰♥️",
+  email: "mjahongirova@gmail.com",
 };
 
 const menuItems = [
@@ -81,15 +81,25 @@ export default function AccountMenu() {
     handleClose();
   };
 
-  const handleAction = (id) => {
-    if (id === "logout") {
-      setIsLoggedIn(false);
-    }
-    if (id === "settings") {
-      navigate("/private");
-    }
-    handleClose();
-  };
+ const handleAction = (id) => {
+  if (id === "orders") {
+    navigate("/orders");
+  }
+
+  if (id === "favorites") {
+    navigate("/favorites");
+  }
+
+  if (id === "logout") {
+    setIsLoggedIn(false);
+  }
+
+  if (id === "settings") {
+    navigate("/private");
+  }
+
+  handleClose();
+};
 
   if (!isLoggedIn) {
     return (

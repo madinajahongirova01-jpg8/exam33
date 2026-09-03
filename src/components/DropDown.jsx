@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Box, Button, Container, Typography, Collapse } from '@mui/material'
 import { Close, Menu, ExpandMore, ExpandLess } from '@mui/icons-material'
+import { Link } from 'react-router'
 
 const categories = [
   'Акции',
@@ -15,13 +16,51 @@ const categories = [
 
 const categoryDetails = {
   Акции: ['Скидки недели', 'Новинки со скидкой', 'Специальные предложения'],
-  'Детская мебель': ['Кроватки', 'Колыбели', 'Люльки', 'Пеленальные комоды', 'Шкафы', 'Аксессуары'],
-  Коляски: ['Коляски для новорождённых', 'Прогулочные коляски', 'Трости', 'Аксессуары для колясок'],
+
+  'Детская мебель': [
+    { name: 'Кроватки', path: '/krovatki' },
+    { name: 'Колыбели' },
+    { name: 'Люльки'},
+    { name: 'Пеленальные комоды' },
+    { name: 'Шкафы', },
+    { name: 'Аксессуары' },
+  ],
+
+  Коляски: [
+    'Коляски для новорождённых',
+    'Прогулочные коляски',
+    'Трости',
+    'Аксессуары для колясок',
+  ],
+
   Автокресла: ['Группа 0+', 'Группа 1', 'Группа 2–3', 'Аксессуары'],
-  Одежда: ['Для новорождённых', 'Повседневная одежда', 'Верхняя одежда', 'Обувь'],
-  Кормление: ['Бутылочки', 'Соски', 'Стульчики для кормления', 'Посуда'],
-  'Гигиена и уход': ['Подгузники', 'Косметика', 'Ванночки', 'Аксессуары для ухода'],
-  'Умные игрушки': ['Развивающие игрушки', 'Интерактивные игрушки', 'Игрушки для малышей'],
+
+  Одежда: [
+    'Для новорождённых',
+    'Повседневная одежда',
+    'Верхняя одежда',
+    'Обувь',
+  ],
+
+  Кормление: [
+    'Бутылочки',
+    'Соски',
+    'Стульчики для кормления',
+    'Посуда',
+  ],
+
+  'Гигиена и уход': [
+    'Подгузники',
+    'Косметика',
+    'Ванночки',
+    'Аксессуары для ухода',
+  ],
+
+  'Умные игрушки': [
+    'Развивающие игрушки',
+    'Интерактивные игрушки',
+    'Игрушки для малышей',
+  ],
 }
 
 export default function Catalog({ variant = 'dropdown' }) {
@@ -45,6 +84,7 @@ export default function Catalog({ variant = 'dropdown' }) {
 
   useEffect(() => {
     if (variant !== 'dropdown') return
+
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
         setIsCatalogOpen(false)
@@ -52,15 +92,21 @@ export default function Catalog({ variant = 'dropdown' }) {
     }
 
     window.addEventListener('keydown', handleKeyDown)
+
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [variant])
 
-  // Компактный вариант для мобильного бокового меню (Drawer) —
-  // список категорий-аккордеонов, без всплывающей панели.
   if (variant === 'inline') {
     return (
       <Box component="nav" aria-label="Каталог товаров">
-        <Typography sx={{ color: '#426d83', fontSize: '1rem', fontWeight: 500, mb: 1.5 }}>
+        <Typography
+          sx={{
+            color: '#426d83',
+            fontSize: '1rem',
+            fontWeight: 500,
+            mb: 1.5,
+          }}
+        >
           Каталог товаров
         </Typography>
 
@@ -91,10 +137,13 @@ export default function Catalog({ variant = 'dropdown' }) {
                     fontSize: '0.95rem',
                     textAlign: 'left',
                     cursor: 'pointer',
-                    '&:hover': { bgcolor: '#F4F8FA' },
+                    '&:hover': {
+                      bgcolor: '#F4F8FA',
+                    },
                   }}
                 >
                   {category}
+
                   {isExpanded ? (
                     <ExpandLess sx={{ fontSize: 20, color: '#7FC9F0' }} />
                   ) : (
@@ -104,28 +153,39 @@ export default function Catalog({ variant = 'dropdown' }) {
 
                 <Collapse in={isExpanded} timeout="auto" unmountOnExit>
                   <Box sx={{ display: 'grid', gap: 0.5, pl: 3, py: 1 }}>
-                    {subcategories.map((subcategory) => (
-                      <Box
-                        component="button"
-                        type="button"
-                        key={subcategory}
-                        onClick={() => selectSubcategory(subcategory)}
-                        sx={{
-                          display: 'block',
-                          p: 0,
-                          border: 0,
-                          bgcolor: 'transparent',
-                          color: selectedSubcategory === subcategory ? '#73bfe7' : '#446B80',
-                          font: 'inherit',
-                          fontSize: '0.9rem',
-                          textAlign: 'left',
-                          cursor: 'pointer',
-                          '&:hover': { color: '#73bfe7' },
-                        }}
-                      >
-                        {subcategory}
-                      </Box>
-                    ))}
+                    {subcategories.map((subcategory) => {
+                      const name =
+                        typeof subcategory === 'string'
+                          ? subcategory
+                          : subcategory.name
+
+                      const path =
+                        typeof subcategory === 'string'
+                          ? '#'
+                          : subcategory.path
+
+                      return (
+                        <Link
+                          key={name}
+                          to={path}
+                          onClick={() => selectSubcategory(name)}
+                          style={{
+                            display: 'block',
+                            color:
+                              selectedSubcategory === name
+                                ? '#73bfe7'
+                                : '#446B80',
+                            fontSize: '0.9rem',
+                            textDecoration:
+                              selectedSubcategory === name
+                                ? 'underline'
+                                : 'none',
+                          }}
+                        >
+                          {name}
+                        </Link>
+                      )
+                    })}
                   </Box>
                 </Collapse>
               </Box>
@@ -136,7 +196,6 @@ export default function Catalog({ variant = 'dropdown' }) {
     )
   }
 
-  // Десктопный вариант — кнопка + выпадающая панель (без изменений в поведении)
   return (
     <>
       <Box
@@ -150,7 +209,7 @@ export default function Catalog({ variant = 'dropdown' }) {
         <Container
           maxWidth={false}
           sx={{
-            maxWidth: "1500px",
+            maxWidth: '1500px',
             minHeight: { xs: 86, sm: 104 },
             display: 'flex',
             alignItems: 'center',
@@ -183,7 +242,9 @@ export default function Catalog({ variant = 'dropdown' }) {
               },
               '& .MuiButton-endIcon': {
                 ml: 1,
-                '& svg': { fontSize: 25 },
+                '& svg': {
+                  fontSize: 25,
+                },
               },
             }}
           >
@@ -203,6 +264,7 @@ export default function Catalog({ variant = 'dropdown' }) {
               bgcolor: 'rgba(44, 69, 80, 0.24)',
             }}
           />
+
           <Box
             id="catalog-menu"
             component="section"
@@ -215,12 +277,21 @@ export default function Catalog({ variant = 'dropdown' }) {
               width: '100%',
               minHeight: { xs: 'calc(100vh - 86px)', sm: 600 },
               display: 'grid',
-              gridTemplateColumns: { xs: '1fr', sm: 'minmax(270px, 31%) 1fr' },
+              gridTemplateColumns: {
+                xs: '1fr',
+                sm: 'minmax(270px, 31%) 1fr',
+              },
               bgcolor: '#fff',
               boxShadow: '0 12px 28px rgba(49, 76, 88, 0.12)',
             }}
           >
-            <Box sx={{ bgcolor: '#426d83', py: { xs: 2, sm: 3 }, px: { xs: 2, sm: 0 } }}>
+            <Box
+              sx={{
+                bgcolor: '#426d83',
+                py: { xs: 2, sm: 3 },
+                px: { xs: 2, sm: 0 },
+              }}
+            >
               <Box sx={{ maxWidth: 256, mx: 'auto' }}>
                 {categories.map((category) => {
                   const isSelected = selectedCategory === category
@@ -247,7 +318,11 @@ export default function Catalog({ variant = 'dropdown' }) {
                         textAlign: 'left',
                         cursor: 'pointer',
                         transition: 'background-color 160ms ease',
-                        '&:hover': { bgcolor: isSelected ? '#fff' : 'rgba(255,255,255,0.12)' },
+                        '&:hover': {
+                          bgcolor: isSelected
+                            ? '#fff'
+                            : 'rgba(255,255,255,0.12)',
+                        },
                       }}
                     >
                       {category}
@@ -260,40 +335,61 @@ export default function Catalog({ variant = 'dropdown' }) {
             <Box sx={{ px: { xs: 3, sm: 7 }, py: { xs: 3, sm: 4 } }}>
               <Typography
                 component="h2"
-                sx={{ color: '#426d83', fontSize: '1.05rem', fontWeight: 400, mb: 1.5 }}
+                sx={{
+                  color: '#426d83',
+                  fontSize: '1.05rem',
+                  fontWeight: 400,
+                  mb: 1.5,
+                }}
               >
                 {selectedCategory}
               </Typography>
-              <Box component="nav" aria-label={`Категории: ${selectedCategory}`} sx={{ display: 'grid', gap: 1.2 }}>
-                {(categoryDetails[selectedCategory] ?? []).map((subcategory) => {
-                  const isSubcategorySelected = selectedSubcategory === subcategory
 
-                  return (
-                    <Box
-                      component="button"
-                      type="button"
-                      key={subcategory}
-                      aria-pressed={isSubcategorySelected}
-                      onClick={() => selectSubcategory(subcategory)}
-                      sx={{
-                        display: 'block',
-                        p: 0,
-                        border: 0,
-                        bgcolor: 'transparent',
-                        color: isSubcategorySelected ? '#73bfe7' : '#426d83',
-                        font: 'inherit',
-                        fontSize: '1rem',
-                        textAlign: 'left',
-                        cursor: 'pointer',
-                        width: 'fit-content',
-                        textDecoration: isSubcategorySelected ? 'underline' : 'none',
-                        '&:hover': { color: '#73bfe7', textDecoration: 'underline' },
-                      }}
-                    >
-                      {subcategory}
-                    </Box>
-                  )
-                })}
+              <Box
+                component="nav"
+                aria-label={`Категории: ${selectedCategory}`}
+                sx={{
+                  display: 'grid',
+                  gap: 1.2,
+                }}
+              >
+                {(categoryDetails[selectedCategory] ?? []).map(
+                  (subcategory) => {
+                    const name =
+                      typeof subcategory === 'string'
+                        ? subcategory
+                        : subcategory.name
+
+                    const path =
+                      typeof subcategory === 'string'
+                        ? '#'
+                        : subcategory.path
+
+                    const isSubcategorySelected =
+                      selectedSubcategory === name
+
+                    return (
+                      <Link
+                        key={name}
+                        to={path}
+                        onClick={() => selectSubcategory(name)}
+                        style={{
+                          display: 'block',
+                          width: 'fit-content',
+                          color: isSubcategorySelected
+                            ? '#73bfe7'
+                            : '#426d83',
+                          fontSize: '1rem',
+                          textDecoration: isSubcategorySelected
+                            ? 'underline'
+                            : 'none',
+                        }}
+                      >
+                        {name}
+                      </Link>
+                    )
+                  }
+                )}
               </Box>
             </Box>
           </Box>

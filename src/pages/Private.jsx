@@ -45,7 +45,7 @@ function Row({ label, children }) {
 }
 
 export default function Private() {
-  const [name, setName] = useState("Анна");
+  const [name, setName] = useState("Madina");
   const [editingName, setEditingName] = useState(false);
   const [password, setPassword] = useState("");
   const [editingPassword, setEditingPassword] = useState(false);
@@ -66,7 +66,7 @@ export default function Private() {
             <PersonIcon sx={{ fontSize: { xs: 32, md: 36 }, color: COLORS.avatarIcon }} />
           </div>
           <p className="text-[#446B80] text-[18px] md:text-[22px] font-medium break-all">
-            annaananananana@gmail.com
+            mjahongirova@gmail.com
           </p>
         </div>
 
@@ -102,7 +102,6 @@ export default function Private() {
 
         <div className="border-t border-[#EAEAEA]" />
 
-        {/* Адреса доставки */}
         <div className="flex flex-col gap-[12px]">
           <p className="text-[#446B80] text-[14px]">Адреса доставки</p>
           <p className="text-[#446B80] text-[15px] font-medium">

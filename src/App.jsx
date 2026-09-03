@@ -22,6 +22,10 @@ const Password1=lazy(()=>import("./pages/Password1"))
 const Password2=lazy(()=>import("./pages/Password2"))
 const Password3=lazy(()=>import("./pages/Password3"))
 const Register=lazy(()=>import("./pages/Register"))
+const Orders=lazy(()=>import("./pages/Orders"))
+const PaymentSuccess=lazy(()=>import("./pages/PaymentSuccess"))
+const Favorites=lazy(()=>import("./pages/Favorites"))
+const Krovatki=lazy(()=>import("./pages/Krovatki"))
 
 
 export default function App() {
@@ -31,7 +35,7 @@ let router=createBrowserRouter([
       path:"/",
       element:(
         <Suspense fallback={<Loader2/>}>
-<Layout/>
+        <Layout/>
         </Suspense>
       )  ,
       children:[
@@ -39,68 +43,68 @@ let router=createBrowserRouter([
             index:true,
             element:(
         <Suspense fallback={<Loader2/>}>
-<Home/>
+           <Home/>
         </Suspense>),
 
         },
         {
-path:"/info/:id",
-element:(
+          path:"/info/:id",
+          element:(
         <Suspense fallback={<Loader2/>}>
-<Info/>
+         <Info/>
         </Suspense>),
         }
          ,
           {
-path:"/cart",
-element:(
+          path:"/cart",
+        element:(
         <Suspense fallback={<Loader2/>}>
-<Cart/>
+       <Cart/>
         </Suspense>),
         }
         ,
            {
-path:"/private",
-element:(
+       path:"/private",
+        element:(
         <Suspense fallback={<Loader2/>}>
-<Private/>
+         <Private/>
         </Suspense>),
         },
           {
-path:"/sales",
-element:(
+      path:"/sales",
+      element:(
         <Suspense fallback={<Loader2/>}>
-<Sales/>
+        <Sales/>
         </Suspense>),
         }
              ,
           {
-path:"/sales2/:id",
-element:(
+      path:"/sales2/:id",
+       element:(
         <Suspense fallback={<Loader2/>}>
-<Sales2/>
+        <Sales2/>
         </Suspense>),
         },
         
           {
-path:"/checkout",
-element:(
+        path:"/checkout",
+       element:(
         <Suspense fallback={<Loader2/>}>
-<Checkout/>
+      <Checkout/>
         </Suspense>),
         },
             {
-path:"/pay",
-element:(
+        path:"/pay",
+        element:(
         <Suspense fallback={<Loader2/>}>
-<Pay/>
+         <Pay/>
         </Suspense>),
         },
         {
             path:"/blog",
             element:(
         <Suspense fallback={<Loader2/>}>
-<Blog/>
+        <Blog/>
         </Suspense>),
 
         },
@@ -108,17 +112,41 @@ element:(
             path:"/contact",
             element:(
         <Suspense fallback={<Loader2/>}>
-<Contact/>
+        <Contact/>
         </Suspense>),
 
-        }
+        },
+        {
+            path:"/krovatki",
+            element:(
+        <Suspense fallback={<Loader2/>}>
+        <Krovatki/>
+        </Suspense>),
+
+        },
+        {
+            path:"/favorites",
+            element:(
+        <Suspense fallback={<Loader2/>}>
+        <Favorites/>
+        </Suspense>),
+
+        },
+        {
+            path:"/orders",
+            element:(
+        <Suspense fallback={<Loader2/>}>
+        <Orders/>
+        </Suspense>),
+
+        },
       ]
     },
         {
             path:"*",
             element:(
         <Suspense fallback={<Loader2/>}>
-<NotFound/>
+         <NotFound/>
         </Suspense>),
 
         },
@@ -126,7 +154,7 @@ element:(
             path:"/forgotPassword",
             element:(
         <Suspense fallback={<Loader2/>}>
-<Password1/>
+         <Password1/>
         </Suspense>),
 
         },
@@ -134,7 +162,7 @@ element:(
             path:"/newPassword",
             element:(
         <Suspense fallback={<Loader2/>}>
-<Password2/>
+         <Password2/>
         </Suspense>),
 
         },
@@ -142,7 +170,7 @@ element:(
             path:"/passwordRecreated",
             element:(
         <Suspense fallback={<Loader2/>}>
-<Password3/>
+        <Password3/>
         </Suspense>),
 
         },
@@ -150,7 +178,15 @@ element:(
             path:"/register",
             element:(
         <Suspense fallback={<Loader2/>}>
-<Register/>
+        <Register/>
+        </Suspense>),
+
+        },
+          {
+            path:"paymentSuccess",
+            element:(
+        <Suspense fallback={<Loader2/>}>
+        <PaymentSuccess/>
         </Suspense>),
 
         },
