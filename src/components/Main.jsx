@@ -8,11 +8,11 @@ export default function Main() {
   return (
     <section className="w-full max-w-[1200px] mx-auto px-4 py-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {blogData.map((item) => (
-          <div
-            key={item.id}
-            className="bg-white rounded-[12px] overflow-hidden shadow-lg hover:-translate-y-1 transition-all duration-300"
-          >
+        {blogData.map((item, index) => (
+  <div
+    key={`${item.id}-${index}`}
+    className="bg-white rounded-[12px] overflow-hidden shadow-lg hover:-translate-y-1 transition-all duration-300"
+  >
             <img
               src={item.image}
               alt=""

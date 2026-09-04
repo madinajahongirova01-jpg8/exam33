@@ -1,41 +1,56 @@
+
 import React from 'react'
+
 import Button2 from './../components/Button'
+
 import mom from "../assets/ребенок с мамой.png"
 
 export default function Header() {
-  return (
-    <div>
-      <header className="bg-[#ecc7c12b] overflow-hidden">
-        <div className="container m-auto flex items-center justify-between px-16 py-24">
 
-          <div className="flex flex-col animate-[slideIn_.9s_ease-out]">
+  return (
+
+    <div>
+
+      <header className="bg-[#ecc7c12b] overflow-hidden">
+
+        <div className="container m-auto flex items-center justify-between px-16 py-24 max-md:flex-col max-md:px-5 max-md:py-12 max-md:text-center">
+
+          <div className="flex flex-col animate-[slideIn_.9s_ease-out] max-md:items-center">
+
             <h1
-              className="font-baloo font-bold text-[65px] w-[650px] text-[#446B80] animate-[fadeUp_1s_ease-out]"
+              className="font-baloo font-bold text-[65px] w-[650px] text-[#446B80] animate-[fadeUp_1s_ease-out] max-md:w-full max-md:text-[38px] max-md:leading-tight"
               style={{ fontFamily: '"Comic Neue", cursive, sans-serif' }}
             >
               Все самое необходимое для вашего ребенка
             </h1>
 
-            <p className="mt-6 text-[20px] text-[#8a97a0] leading-relaxed animate-[fadeUp_1.3s_ease-out]">
-              Посмотрите нашу новую подборку<br />
+            <p className="mt-6 text-[20px] text-[#8a97a0] leading-relaxed animate-[fadeUp_1.3s_ease-out] max-md:text-[17px] max-md:leading-relaxed">
+              Посмотрите нашу новую подборку<br className="max-md:hidden" />
               для ухода за вашим ребенком
             </p>
 
             <div className="mt-[30px] animate-[fadeUp_1.6s_ease-out]">
+
               <div className="transition-all duration-300 hover:scale-105 active:scale-95">
+
                 <Button2>Смотрет</Button2>
+
               </div>
+
             </div>
+
           </div>
 
-          <div className="relative animate-[float_4s_ease-in-out_infinite]">
+          <div className="relative animate-[float_4s_ease-in-out_infinite] max-md:mt-8">
+
             <div className="absolute inset-10 rounded-full bg-[#f5c7c0] blur-3xl opacity-30 animate-pulse"></div>
 
             <img
               src={mom}
               alt=""
-              className="relative w-[620px] h-[620px] object-contain drop-shadow-2xl transition-transform duration-500 hover:scale-105"
+              className="relative w-[620px] h-[620px] object-contain drop-shadow-2xl transition-transform duration-500 hover:scale-105 max-md:w-[330px] max-md:h-[330px]"
             />
+
           </div>
 
         </div>
@@ -74,7 +89,10 @@ export default function Header() {
             }
           `}
         </style>
+
       </header>
+
     </div>
+
   )
 }
